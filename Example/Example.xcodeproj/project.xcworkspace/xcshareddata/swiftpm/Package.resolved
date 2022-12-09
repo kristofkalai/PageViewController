@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "pageviewcontroller",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stateman92/PageViewController",
+      "state" : {
+        "revision" : "0a8208c8efd93f6dc9ce006ccd1c990eb00e9560",
+        "version" : "0.0.1"
+      }
+    }
+  ],
+  "version" : 2
+}
