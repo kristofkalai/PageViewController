@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stateman92/PageViewController",
       "state" : {
-        "revision" : "0a8208c8efd93f6dc9ce006ccd1c990eb00e9560",
-        "version" : "0.0.1"
+        "revision" : "14e8de7e59fc0a91a5fd6d5b2aa33829a43482c5",
+        "version" : "0.0.2"
       }
     }
   ],

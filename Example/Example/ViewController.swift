@@ -8,7 +8,7 @@
 import PageViewController
 import UIKit
 
-class ViewController: UIViewController {
+final class ViewController: UIViewController {
     private let firstViewController: UIViewController = {
         let viewController = UIViewController()
         viewController.view.backgroundColor = .green
@@ -33,15 +33,17 @@ class ViewController: UIViewController {
                 firstViewController,
                 secondViewController,
                 thirdViewController
-            ]
+            ],
+            enableOverScroll: false
         )
 
         addChild(page)
         view.addSubview(page.view)
-        page.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        page.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        page.view.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        page.view.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        page.view.translatesAutoresizingMaskIntoConstraints = false
+        page.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 50).isActive = true
+        page.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50).isActive = true
+        page.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50).isActive = true
+        page.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50).isActive = true
         page.didMove(toParent: self)
 
         page.transition = { completedPercent, currentIndex, nextIndex in

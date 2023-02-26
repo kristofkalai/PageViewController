@@ -51,8 +51,19 @@ extension PageViewController {
 extension PageViewController: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if !enableOverScroll {
+            let contentOffset: CGFloat = {
+                navigationOrientation == .horizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
+            }()
+            let preBounce: Bool = {
+                let currentIndexIsZero = currentIndex == .zero
+                return currentIndexIsZero && contentOffset < .zero
+            }()
+            let postBounce: Bool = {
+                let currentIndexIsLast = currentIndex == storedViewControllers.count - 1
+                return currentIndexIsLast && contentOffset > .zero
+            }()
             scrollViews.forEach {
-                $0.bounces = !(currentIndex == .zero || currentIndex == storedViewControllers.count - 1)
+                $0.bounces = !(preBounce || postBounce)
             }
         }
 
@@ -72,9 +83,10 @@ extension PageViewController: UIScrollViewDelegate {
         }
         percentComplete = (point - size) / size
         guard percentComplete != .zero else { return }
+        let nextIndex = percentComplete > .zero ? currentIndex?.advanced(by: 1) : currentIndex?.advanced(by: -1)
         transition(percentComplete,
-                   currentIndex,
-                   percentComplete > .zero ? currentIndex?.advanced(by: 1) : currentIndex?.advanced(by: -1))
+                   percentComplete == 1 ? nextIndex : currentIndex,
+                   percentComplete == 1 ? nil : nextIndex)
     }
 }
 
