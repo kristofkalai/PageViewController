@@ -33,8 +33,7 @@ final class ViewController: UIViewController {
                 firstViewController,
                 secondViewController,
                 thirdViewController
-            ],
-            enableOverScroll: false
+            ]
         )
 
         addChild(page)

@@ -30,6 +30,7 @@ page.transition = { completedPercent, currentIndex, nextIndex in
         print("\(nextIndex). <-\(String(format: "%.3f", completedPercent))-- \(currentIndex).")
     }
 }
+```
 
 For details see the Example app.
 
