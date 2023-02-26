@@ -50,23 +50,6 @@ extension PageViewController {
 
 extension PageViewController: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if !enableOverScroll {
-            let contentOffset: CGFloat = {
-                navigationOrientation == .horizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
-            }()
-            let preBounce: Bool = {
-                let currentIndexIsZero = (currentIndex ?? .zero) <= .zero
-                return currentIndexIsZero && contentOffset < .zero
-            }()
-            let postBounce: Bool = {
-                let currentIndexIsLast = (currentIndex ?? .zero) >= storedViewControllers.count - 1
-                return currentIndexIsLast && contentOffset > .zero
-            }()
-            scrollViews.forEach {
-                $0.bounces = !(preBounce || postBounce)
-            }
-        }
-
         var percentComplete: CGFloat
         let point: CGFloat
         let size: CGFloat
@@ -82,6 +65,28 @@ extension PageViewController: UIScrollViewDelegate {
             size = .zero
         }
         percentComplete = (point - size) / size
+
+        if !enableOverScroll {
+            let baseRecord = viewControllers?
+                .map { viewController -> (viewController: UIViewController, originX: CGFloat) in
+                    let originX = view.convert(viewController.view.bounds.origin, from: viewController.view).x
+                    return (viewController: viewController, originX: originX)
+                }
+                .sorted { $0.originX < $1.originX }
+                .first
+
+            if let baseRecord, let baseIndex = index(of: baseRecord.viewController) {
+                let baseViewControllerOffsetXRatio = -baseRecord.originX / scrollView.bounds.width
+
+                let count = CGFloat(storedViewControllers.count - 1)
+                let progress = (CGFloat(baseIndex) + baseViewControllerOffsetXRatio) / count
+                if !(0...1 ~= progress) {
+                    scrollView.isScrollEnabled = false
+                    scrollView.isScrollEnabled = true
+                }
+            }
+        }
+
         guard percentComplete != .zero else { return }
         let nextIndex = percentComplete > .zero ? currentIndex?.advanced(by: 1) : currentIndex?.advanced(by: -1)
         transition(percentComplete,
