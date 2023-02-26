@@ -50,23 +50,6 @@ extension PageViewController {
 
 extension PageViewController: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if !enableOverScroll {
-            let contentOffset: CGFloat = {
-                navigationOrientation == .horizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
-            }()
-            let preBounce: Bool = {
-                let currentIndexIsZero = (currentIndex ?? .zero) <= .zero
-                return currentIndexIsZero && contentOffset < .zero
-            }()
-            let postBounce: Bool = {
-                let currentIndexIsLast = (currentIndex ?? .zero) >= storedViewControllers.count - 1
-                return currentIndexIsLast && contentOffset > .zero
-            }()
-            scrollViews.forEach {
-                $0.bounces = !(preBounce || postBounce)
-            }
-        }
-
         var percentComplete: CGFloat
         let point: CGFloat
         let size: CGFloat
@@ -82,6 +65,30 @@ extension PageViewController: UIScrollViewDelegate {
             size = .zero
         }
         percentComplete = (point - size) / size
+
+        if !enableOverScroll {
+            let preBounce: Bool = {
+                let currentIndexIsZero = currentIndex == .zero
+                return currentIndexIsZero && point < size
+            }()
+            let postBounce: Bool = {
+                let currentIndexIsLast = currentIndex == storedViewControllers.count - 1
+                return currentIndexIsLast && point > .zero
+            }()
+            scrollViews.forEach {
+                $0.bounces = !(preBounce || postBounce)
+            }
+            if preBounce {
+                switch navigationOrientation {
+                case .horizontal:
+                    scrollView.contentOffset.x = view.frame.size.width
+                case .vertical:
+                    scrollView.contentOffset.y = view.frame.size.height
+                @unknown default: break
+                }
+            }
+        }
+
         guard percentComplete != .zero else { return }
         let nextIndex = percentComplete > .zero ? currentIndex?.advanced(by: 1) : currentIndex?.advanced(by: -1)
         transition(percentComplete,
