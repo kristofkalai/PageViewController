@@ -55,11 +55,11 @@ extension PageViewController: UIScrollViewDelegate {
                 navigationOrientation == .horizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
             }()
             let preBounce: Bool = {
-                let currentIndexIsZero = currentIndex == .zero
+                let currentIndexIsZero = (currentIndex ?? .zero) <= .zero
                 return currentIndexIsZero && contentOffset < .zero
             }()
             let postBounce: Bool = {
-                let currentIndexIsLast = currentIndex == storedViewControllers.count - 1
+                let currentIndexIsLast = (currentIndex ?? .zero) >= storedViewControllers.count - 1
                 return currentIndexIsLast && contentOffset > .zero
             }()
             scrollViews.forEach {
